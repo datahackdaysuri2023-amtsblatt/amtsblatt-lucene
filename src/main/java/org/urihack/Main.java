@@ -31,6 +31,8 @@ public class Main {
 
             var reader = new BufferedReader(new InputStreamReader(System.in));
 
+            System.out.println("Please enter your search query. To exit type 'quit'.");
+
             do {
                 String searchString = reader.readLine();
 
