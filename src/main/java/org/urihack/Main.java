@@ -4,6 +4,7 @@ import org.urihack.pdf.PdfLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Main {
@@ -12,13 +13,14 @@ public class Main {
     private static final String pdfFileDirectory = "C:\\dev\\HackUri\\data\\pdf";
     private static final String indexDirectoryPath = "C:\\dev\\HackUri\\data\\index";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // To build the index set to true
         final boolean buildIndex = false;
 
+        FileSystemIndex index = null;
+
         try {
-            FileSystemIndex index;
             if (buildIndex) {
                 index = buildIndex();
             } else {
@@ -29,14 +31,18 @@ public class Main {
             var docHits = index.searchQuery(searchString);
 
             if (docHits.size() == 0) {
-                System.out.println(String.format("No hits for search string '%s'", searchString));
+                System.out.printf("No hits for search string '%s'%n", searchString);
             } else {
-                System.out.println(String.format("Search string '%s' yielded %d results", searchString, docHits.size()));
+                System.out.printf("Search string '%s' yielded %d results%n", searchString, docHits.size());
                 for (var hit : docHits) {
                     System.out.println(hit);
                 }
             }
         } catch (Exception ex) {
+            if (index != null){
+                index.close();
+            }
+
             ex.printStackTrace();
         }
     }
@@ -47,13 +53,13 @@ public class Main {
         var pdfs = Files.find(Paths.get(pdfFileDirectory),
                 Integer.MAX_VALUE,
                 ((path, basicFileAttributes) -> basicFileAttributes.isRegularFile()))
-                .map(path -> path.toFile())
+                .map(Path::toFile)
                 .toList();
 
         for (var pdf : pdfs) {
             var doc = PdfLoader.createDocument(pdf);
             index.addDocument(doc);
-            System.out.println(doc.getField("filepath").stringValue());
+            System.out.println(doc.getField(Const.FILEPATH).stringValue());
         }
 
         return index;
