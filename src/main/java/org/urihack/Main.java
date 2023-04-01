@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 public class Main {
 
-    // Adjust based on where the PDFs lie and where the index should be built.
+    // Adjust based on where the PDFs lie and where the index should be built/lies to be read.
     private static final String pdfFileDirectory = "C:\\dev\\HackUri\\data\\pdf";
     private static final String indexDirectoryPath = "C:\\dev\\HackUri\\data\\index";
 
