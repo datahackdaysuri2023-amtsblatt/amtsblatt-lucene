@@ -2,7 +2,9 @@ package org.urihack;
 
 import org.urihack.pdf.PdfLoader;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,17 +29,26 @@ public class Main {
                 index = new FileSystemIndex(indexDirectoryPath, false);
             }
 
-            final String searchString = "Schächenbrücke";
-            var docHits = index.searchQuery(searchString);
+            var reader = new BufferedReader(new InputStreamReader(System.in));
 
-            if (docHits.size() == 0) {
-                System.out.printf("No hits for search string '%s'%n", searchString);
-            } else {
-                System.out.printf("Search string '%s' yielded %d results%n", searchString, docHits.size());
-                for (var hit : docHits) {
-                    System.out.println(hit);
+            do {
+                String searchString = reader.readLine();
+
+                if (searchString.equals("quit")){
+                    break;
                 }
-            }
+                var docHits = index.searchQuery(searchString);
+
+                if (docHits.size() == 0) {
+                    System.out.printf("No hits for search string '%s'%n", searchString);
+                } else {
+                    System.out.printf("Search string '%s' yielded %d results%n", searchString, docHits.size());
+                    for (var hit : docHits) {
+                        System.out.println(hit);
+                    }
+                }
+            } while (true);
+
         } catch (Exception ex) {
             if (index != null){
                 index.close();
